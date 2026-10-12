@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Product Inventory & Analytics</title>
+  <title>EWB Mini Project</title>
   <style>
     body {
       font-family: 'Segoe UI', Roboto, system-ui, monospace;
@@ -82,7 +82,7 @@
 </head>
 <body>
 <div class="card">
-  <h1>📦 Interactive Product Inventory</h1>
+  <h1>Interactive Product Inventory</h1>
   <div class="sub">
     <span class="badge">prompt() simulation</span>
     <span class="badge">forEach / filter / map</span>
@@ -96,7 +96,6 @@
 </div>
 <script>
   (function() {
-    // ---------- CAPTURE CONSOLE OUTPUT FOR DISPLAY ----------
     const outputEl = document.getElementById('output');
     const originalLog = console.log;
     let logBuffer = [];
@@ -120,10 +119,7 @@
       outputEl.textContent = logBuffer.join('\n');
     };
 
-    // Helper to reset console log (not needed)
-    // -------------------------------------------------
-    // ---------- PROJECT IMPLEMENTATION ----------
-    // -------------------------------------------------
+    // ----------Actual project implementation----------
 
     console.log('--- Initializing Inventory System ---');
 
@@ -134,7 +130,8 @@
       { name: 'Mouse', price: 25 }
     ];
 
-    // Prompt simulation: if prompt is blocked (like in some embedded contexts), use default
+    // Prompt: if prompt is blocked in some embedded contexts), use default
+
     let newProductName = null;
     let newProductPrice = null;
 
@@ -203,7 +200,7 @@
     // Validate the newly added product via switch
     const validation = validatePrice(finalPrice);
     if (!validation.valid) {
-      console.log(`⚠️ Invalid price for "${trimmedName}" (${validation.reason}). Using default $150.`);
+      console.log(`Invalid price for "${trimmedName}" (${validation.reason}). Using default $150.`);
       // fix it (though we already handled before; this is for demonstration)
       const idx = inventory.findIndex(item => item.name === trimmedName);
       if (idx !== -1) inventory[idx].price = 150;
@@ -221,23 +218,23 @@
       const item = inventory[i];
       // Skip if name is falsy or empty (handling bad data)
       if (!item.name || item.name.trim() === '') {
-        console.log(`   ⏭️  Skipping empty/invalid item at index ${i}`);
+        console.log(`   Skipping empty/invalid item at index ${i}`);
         continue;
       }
       // Skip if price is invalid (e.g., NaN)
       if (typeof item.price !== 'number' || isNaN(item.price)) {
-        console.log(`   ⏭️  Skipping item with invalid price: ${item.name}`);
+        console.log(`   Skipping item with invalid price: ${item.name}`);
         continue;
       }
       // If we find the target, log and break
       if (item.name.toLowerCase() === searchTarget.toLowerCase()) {
-        console.log(`   ✅ Found target product: "${item.name}" at $${item.price}`);
+        console.log(`   Found target product: "${item.name}" at $${item.price}`);
         found = true;
         break; // stop searching
       }
     }
     if (!found) {
-      console.log(`   ❌ Target "${searchTarget}" not found in inventory.`);
+      console.log(`   Target "${searchTarget}" not found in inventory.`);
     }
 
     // 4. FUNCTIONS & SCOPE: regular function and arrow functions
@@ -299,7 +296,7 @@
     // Final note: everything works with break/continue, functions, loops, etc.
 
     // Tiny hack to make sure the last line is visible
-    console.log('\n✅ Inventory analytics complete.');
+    console.log('\n Inventory analytics complete.');
   })();
 </script>
 </body>
