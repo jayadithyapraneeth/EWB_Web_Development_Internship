@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Product Inventory & Analytics</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, monospace;
+      background: #0b0f17;
+      color: #d4e6f1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .card {
+      background: #1a2332;
+      border-radius: 1.5rem;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.8);
+      border: 1px solid #2e405b;
+      max-width: 800px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: #b9e0ff;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      border-bottom: 2px solid #2e4b6e;
+      padding-bottom: 0.75rem;
+    }
+    .sub {
+      color: #8ba3c7;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: #1e3a5f;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #aad0ff;
+    }
+    pre {
+      background: #0d121c;
+      padding: 1.5rem;
+      border-radius: 1.2rem;
+      border-left: 6px solid #3f7eb6;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c7d9f0;
+      margin: 0;
+      border: 1px solid #253141;
+    }
+    .note {
+      background: #121c28;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #97b3d4;
+      border-left: 4px solid #3f7eb6;
+    }
+    .prompt-line {
+      color: #b0d0ff;
+    }
+    .highlight {
+      color: #e6f0ff;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>📦 Interactive Product Inventory</h1>
+  <div class="sub">
+    <span class="badge">prompt() simulation</span>
+    <span class="badge">forEach / filter / map</span>
+    <span class="badge">break / continue</span>
+    <span class="badge">arrow functions</span>
+  </div>
+  <pre id="output">Loading simulation…</pre>
+  <div class="note">
+    Open browser console (F12) to see the full interactive output — prompts included.
+  </div>
+</div>
+<script>
+  (function() {
+    // ---------- CAPTURE CONSOLE OUTPUT FOR DISPLAY ----------
+    const outputEl = document.getElementById('output');
+    const originalLog = console.log;
+    let logBuffer = [];
+
+    // Override console.log to also write to the <pre> element
+    console.log = function(...args) {
+      originalLog.apply(console, args); // keep native console
+
+      // Convert args to a readable string (similar to console display)
+      const line = args.map(arg => {
+        if (typeof arg === 'object' && arg !== null) {
+          if (Array.isArray(arg)) return JSON.stringify(arg);
+          if (arg instanceof Set) return `Set(${arg.size}) {${[...arg].join(', ')}}`;
+          if (arg instanceof Map) return `Map(${arg.size})`;
+          return JSON.stringify(arg);
+        }
+        return String(arg);
+      }).join(' ');
+
+      logBuffer.push(line);
+      outputEl.textContent = logBuffer.join('\n');
+    };
+
+    // Helper to reset console log (not needed)
+    // -------------------------------------------------
+    // ---------- PROJECT IMPLEMENTATION ----------
+    // -------------------------------------------------
+
+    console.log('--- Initializing Inventory System ---');
+
+    // 1. DATA & INPUT INITIALIZATION (with prompt fallback for demo)
+    // Pre-existing items (array of objects)
+    const inventory = [
+      { name: 'Laptop', price: 800 },
+      { name: 'Mouse', price: 25 }
+    ];
+
+    // Prompt simulation: if prompt is blocked (like in some embedded contexts), use default
+    let newProductName = null;
+    let newProductPrice = null;
+
+    try {
+      // Try using prompt (works in regular browser tab)
+      newProductName = prompt('Enter new product name (e.g., Monitor):');
+      if (newProductName !== null && newProductName.trim() !== '') {
+        const priceInput = prompt(`Enter price for "${newProductName.trim()}":`);
+        newProductPrice = priceInput !== null ? Number(priceInput) : NaN;
+      } else {
+        // user cancelled or empty -> fallback simulation
+        newProductName = 'Monitor';
+        newProductPrice = 150;
+      }
+    } catch (e) {
+      // prompt might throw in some sandboxed iframes — fallback
+      newProductName = 'Monitor';
+      newProductPrice = 150;
+    }
+
+    // Fallback if prompt returned invalid or null
+    if (newProductName === null || newProductName.trim() === '') {
+      newProductName = 'Monitor';
+      newProductPrice = 150;
+    }
+    if (isNaN(newProductPrice) || newProductPrice <= 0) {
+      newProductPrice = 150; // sensible default for demo
+    }
+
+    const trimmedName = newProductName.trim();
+    const finalPrice = Number(newProductPrice);
+
+    // Add to inventory (explicit conversion already done)
+    inventory.push({ name: trimmedName, price: finalPrice });
+
+    // Log prompt execution (as per expected output)
+    console.log(`[Prompt executed: User adds "${trimmedName}" at "$${finalPrice}"]`);
+
+    // 2. CONTROL FLOW & CONDITIONAL EVALUATION: assign category badges
+    //    (We'll use a function that uses if/else and switch for demonstration)
+    function getCategoryBadge(price) {
+      // dynamic thresholds: Budget < 50, Standard 50–199, Premium >= 200
+      if (price < 50) {
+        return 'Budget';
+      } else if (price >= 50 && price < 200) {
+        return 'Standard';
+      } else {
+        return 'Premium';
+      }
+      // Note: we could use switch, but the requirement says "uses if...else and switch blocks"
+      // So we'll also add a switch-based validation function later to satisfy both.
+    }
+
+    // Additional switch usage: validate that price is a positive number (redundant but meets requirement)
+    function validatePrice(price) {
+      switch (true) {
+        case (typeof price !== 'number' || isNaN(price)):
+          return { valid: false, reason: 'not a number' };
+        case (price <= 0):
+          return { valid: false, reason: 'non-positive' };
+        default:
+          return { valid: true };
+      }
+    }
+
+    // Validate the newly added product via switch
+    const validation = validatePrice(finalPrice);
+    if (!validation.valid) {
+      console.log(`⚠️ Invalid price for "${trimmedName}" (${validation.reason}). Using default $150.`);
+      // fix it (though we already handled before; this is for demonstration)
+      const idx = inventory.findIndex(item => item.name === trimmedName);
+      if (idx !== -1) inventory[idx].price = 150;
+    }
+
+    // 3. LOOPS & FLOW CONTROL (break/continue)
+    // We'll search inventory for a specific product, handling missing inputs.
+    // For demonstration: search for the newly added product, and also show continue/break.
+    console.log('\n--- Searching inventory (break/continue demo) ---');
+    const searchTarget = trimmedName; // search for what we just added
+    let found = false;
+
+    // Using a for loop with break/continue
+    for (let i = 0; i < inventory.length; i++) {
+      const item = inventory[i];
+      // Skip if name is falsy or empty (handling bad data)
+      if (!item.name || item.name.trim() === '') {
+        console.log(`   ⏭️  Skipping empty/invalid item at index ${i}`);
+        continue;
+      }
+      // Skip if price is invalid (e.g., NaN)
+      if (typeof item.price !== 'number' || isNaN(item.price)) {
+        console.log(`   ⏭️  Skipping item with invalid price: ${item.name}`);
+        continue;
+      }
+      // If we find the target, log and break
+      if (item.name.toLowerCase() === searchTarget.toLowerCase()) {
+        console.log(`   ✅ Found target product: "${item.name}" at $${item.price}`);
+        found = true;
+        break; // stop searching
+      }
+    }
+    if (!found) {
+      console.log(`   ❌ Target "${searchTarget}" not found in inventory.`);
+    }
+
+    // 4. FUNCTIONS & SCOPE: regular function and arrow functions
+    //    Regular function to calculate total inventory value
+    function calculateTotalValue(inv) {
+      let total = 0;
+      for (let i = 0; i < inv.length; i++) {
+        if (typeof inv[i].price === 'number' && !isNaN(inv[i].price)) {
+          total += inv[i].price;
+        }
+      }
+      return total;
+    }
+
+    // Arrow function to apply tax/discount with secure local scoping
+    const applyTaxAndDiscount = (price, taxRate = 0.08, discount = 0) => {
+      // 'taxRate' and 'discount' are local to this arrow function
+      const afterDiscount = price * (1 - discount);
+      const withTax = afterDiscount * (1 + taxRate);
+      return Number(withTax.toFixed(2)); // round to 2 decimals
+    };
+
+    // We'll use applyTaxAndDiscount to simulate a "discounted price" but keep original for report
+    // (We'll just demonstrate it, not modify the inventory)
+
+    // 5. ARRAY METHODS & ITERATION
+    console.log('\n--- Processing Inventory Roster (forEach) ---');
+    // forEach to log each item with category badge
+    inventory.forEach(item => {
+      const category = getCategoryBadge(item.price);
+      console.log(`* Item: ${item.name} ($${item.price}) -> Category: ${category}`);
+    });
+
+    console.log('\n--- Financial Analytics ---');
+    const totalValue = calculateTotalValue(inventory);
+    console.log(`Total Inventory Value: $${totalValue}`);
+
+    // filter: affordable items under $200
+    const affordableItems = inventory
+      .filter(item => item.price < 200)
+      .map(item => item.name); // map to names only for the output array
+    console.log(`Filtered Affordable Items (Under $200): ${JSON.stringify(affordableItems)}`);
+
+    // map: formatted report list (uppercase name + price)
+    const formattedReport = inventory.map(item => {
+      const upperName = item.name.toUpperCase();
+      return `${upperName}: $${item.price}`;
+    });
+    console.log(`Formatted Report List: ${JSON.stringify(formattedReport)}`);
+
+    // Additional demonstration of arrow function with tax/discount (secure scoping)
+    console.log('\n--- Tax & Discount Simulation (arrow function scope) ---');
+    inventory.forEach(item => {
+      const discountedPrice = applyTaxAndDiscount(item.price, 0.1, 0.05); // 10% tax, 5% discount
+      // This log shows that variables taxRate/discount are not leaking
+      console.log(`   ${item.name}: original $${item.price} → after 5% discount + 10% tax = $${discountedPrice}`);
+    });
+
+    // Final note: everything works with break/continue, functions, loops, etc.
+
+    // Tiny hack to make sure the last line is visible
+    console.log('\n✅ Inventory analytics complete.');
+  })();
+</script>
+</body>
+</html>
