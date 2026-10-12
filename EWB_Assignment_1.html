@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assignment 1 — Variables & Data Types</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { color: #58a6ff; font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .sub { color: #8b949e; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .card {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+    label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 0.3rem; }
+    input {
+      width: 100%; padding: 0.6rem 0.8rem; background: #0d1117;
+      border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9;
+      font-size: 0.9rem; margin-bottom: 1rem;
+    }
+    input:focus { outline: none; border-color: #58a6ff; }
+    button {
+      background: #238636; color: white; border: none;
+      padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 500;
+    }
+    button:hover { background: #2ea043; }
+    pre {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 1rem; font-family: 'Consolas', monospace; font-size: 0.85rem;
+      line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+      min-height: 120px; color: #c9d1d9;
+    }
+    .var-note { font-size: 0.8rem; color: #8b949e; margin-top: -0.5rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Assignment 1 — Variables, Data Types & Console Operations</h1>
+  <p class="sub">Declare variables with <code>var</code>, <code>let</code>, <code>const</code> and inspect them with <code>typeof</code>.</p>
+
+  <div class="card">
+    <label>Name (stored with <code>var</code>)</label>
+    <input id="name" type="text" placeholder="e.g., Alice">
+
+    <label>Age (stored with <code>let</code>)</label>
+    <input id="age" type="number" placeholder="e.g., 25">
+
+    <label>Employment Status (stored with <code>const</code> boolean)</label>
+    <input id="employed" type="text" placeholder="yes / no">
+
+    <label>Skills (comma-separated, stored in an array)</label>
+    <input id="skills" type="text" placeholder="HTML, CSS, JavaScript">
+
+    <button onclick="runAssignment()">▶ Run & Inspect Types</button>
+  </div>
+
+  <pre id="output">Click "Run & Inspect Types" to see the output...</pre>
+</div>
+
+<script>
+function runAssignment() {
+  const output = document.getElementById('output');
+
+  var nameInput = document.getElementById('name').value.trim() || 'Unknown';
+  let ageInput = document.getElementById('age').value.trim();
+  const employedInput = document.getElementById('employed').value.trim().toLowerCase();
+  const skillsInput = document.getElementById('skills').value;
+
+  var userName = nameInput;
+  let userAge = Number(ageInput);                
+  const isEmployed = employedInput === 'yes'; 
+  let skills = skillsInput
+    .split(',')
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+
+  if (isNaN(userAge)) {
+    output.textContent = '⚠️ Age must be a valid number.';
+    return;
+  }
+
+  // Build output using typeof
+  const lines = [
+    `Name: ${userName} (Type: ${typeof(userName)})`,
+    `Age: ${userAge} (Type: ${typeof(userAge)})`,
+    `Is Employed: ${isEmployed} (Type: ${typeof(isEmployed)})`,
+    `Skills: ${skills} (Type: ${typeof(skills)})`
+  ];
+
+  output.textContent = lines.join('\n');
+  console.log(lines.join('\n')); // also log to console
+}
+</script>
+</body>
+</html>

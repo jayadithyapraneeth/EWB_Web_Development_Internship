@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assignment 6 — Arrays, Objects & Methods</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117; color: #c9d1d9;
+      padding: 2rem 1rem; min-height: 100vh;
+    }
+    .container { max-width: 760px; margin: 0 auto; }
+    h1 { color: #58a6ff; font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .sub { color: #8b949e; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .card {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+    label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 0.3rem; }
+    input {
+      width: 100%; padding: 0.6rem 0.8rem; background: #0d1117;
+      border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9;
+      font-size: 0.9rem; margin-bottom: 1rem;
+    }
+    input:focus { outline: none; border-color: #58a6ff; }
+    button {
+      background: #238636; color: white; border: none;
+      padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 500; margin-right: 0.5rem;
+    }
+    button:hover { background: #2ea043; }
+    pre {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 1rem; font-family: 'Consolas', monospace; font-size: 0.85rem;
+      line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+      min-height: 160px; color: #c9d1d9;
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Assignment 6 — Arrays, Objects & Core Methods</h1>
+  <p class="sub">Using <code>forEach loop</code>, <code>filter()</code>, and <code>map()</code> on an array of product objects.</p>
+
+  <div class="card">
+    <label>Add a new product (name, price — comma-separated)</label>
+    <input id="newProduct" type="text" placeholder="e.g., Monitor, 150">
+    <button onclick="addProduct()">➕ Add Product</button>
+  </div>
+
+  <div class="card">
+    <label>Filter: show products with price below this threshold</label>
+    <input id="threshold" type="number" value="50" min="0">
+    <div class="btn-row">
+      <button onclick="runForEach()"> forEach — List All</button><br>
+      <button onclick="runFilter()"> filter — filter products under threshold price</button><br>
+      <button onclick="runMap()"> map — show Formatted Tags</button><br>
+      <button onclick="runAll()">▶ Run All functions</button>
+    </div>
+  </div>
+
+  <pre id="output">Click any button above to see the output...<br> Existing products in the list: [
+  { name: 'Laptop', price: 80000 },
+  { name: 'Mouse', price: 400 },
+  { name: 'Keyboard', price: 600 }];
+</pre>
+</div>
+
+<script>
+
+//product array
+let products = [
+  { name: 'Laptop', price: 80000 },
+  { name: 'Mouse', price: 400 },
+  { name: 'Keyboard', price: 600 }];
+
+const output = document.getElementById('output');
+let logLines = [];
+
+function clearLog() { logLines = []; }
+function appendLog(line) { logLines.push(line); output.textContent = logLines.join('\n'); }
+
+//Adding a new product
+function addProduct() {
+  const raw = document.getElementById('newProduct').value.trim();
+  const parts = raw.split(',').map(p => p.trim());
+  const name = parts[0];
+  const price = Number(parts[1]);
+
+  if (!name || isNaN(price)) {
+    alert('Please enter a valid format: Name, Price (e.g., Monitor, 150)');
+    return;
+  }
+
+  //Checking for duplicate product name
+  if (products.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    alert(`"${name}" already exists in the inventory.`);
+    return;
+  }
+
+  products.push({ name, price });
+  clearLog();
+  appendLog(`Added: ${name} (₹${price})`);
+  console.log('Added:', name, price);
+
+  document.getElementById('newProduct').value = " ";
+
+}
+
+// --- forEach: print all products ---
+function runForEach() {
+  clearLog();
+  appendLog('-- All Products (forEach) --');
+  products.forEach(product => {
+    appendLog(`Item: ${product.name} - Price: ₹${product.price}`);
+  });
+}
+
+// --- filter: products under threshold ---
+function runFilter() {
+  const threshold = Number(document.getElementById('threshold').value);
+  if (isNaN(threshold)) {
+    appendLog('⚠️ Threshold must be a number.');
+    return;
+  }
+  clearLog();
+  const filtered = products.filter(p => p.price < threshold);
+  appendLog(`-- Filtered Products (Price < ₹${threshold}) --`);
+  appendLog(JSON.stringify(filtered, null, 2));
+}
+
+// --- map: formatted tags ---
+function runMap() {
+  clearLog();
+  const tags = products.map(p => `${p.name.toUpperCase()} costs ₹${p.price}`);
+  appendLog('-- Mapped Product Tags (map) --');
+  appendLog(JSON.stringify(tags, null, 2));
+}
+
+// --- run all three sequentially ---
+function runAll() {
+  clearLog();
+  appendLog('-- All Products (forEach) --');
+  products.forEach(p => appendLog(`Item: ${p.name} - Price: ₹${p.price}`));
+
+  const threshold = Number(document.getElementById('threshold').value);
+  const filtered = products.filter(p => p.price < threshold);
+  appendLog(`\n-- Filtered Products (Price < ₹${threshold}) --`);
+  appendLog(JSON.stringify(filtered, null, 2));
+
+  const tags = products.map(p => `${p.name.toUpperCase()} costs ₹${p.price}`);
+  appendLog(`\n-- Mapped Product Tags (map) --`);
+  appendLog(JSON.stringify(tags, null, 2));
+}
+</script>
+</body>
+</html>

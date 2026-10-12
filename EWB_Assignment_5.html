@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assignment 5 — Functions & Scope</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117; color: #c9d1d9;
+      padding: 2rem 1rem; min-height: 100vh;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { color: #58a6ff; font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .sub { color: #8b949e; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .card {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+    .row { display: flex; gap: 0.75rem; }
+    .row > div { flex: 1; }
+    label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 0.3rem; }
+    input {
+      width: 100%; padding: 0.6rem 0.8rem; background: #0d1117;
+      border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9;
+      font-size: 0.9rem; margin-bottom: 1rem;
+    }
+    input:focus { outline: none; border-color: #58a6ff; }
+    button {
+      background: #238636; color: white; border: none;
+      padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 500;
+    }
+    button:hover { background: #2ea043; }
+    pre {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 1rem; font-family: 'Consolas', monospace; font-size: 0.85rem;
+      line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+      min-height: 120px; color: #c9d1d9;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Assignment 5 — Function Architecture & Scope</h1>
+  <p class="sub">Two functions (standard & arrow) with default parameters, plus a scope test.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Length</label>
+        <input id="length" type="number" placeholder="5">
+      </div>
+      <div>
+        <label>Width</label>
+        <input id="width" type="number" placeholder="4">
+      </div>
+    </div>
+    <button onclick="runAssignment()">▶ Run Functions</button>
+  </div>
+
+  <pre id="output">Click "Run Functions" to see the output...</pre>
+</div>
+
+<script>
+//Standard function with default parameters
+function calculateAreaStandard(length = 5, width = 4) {
+  return length * width;
+}
+
+//Arrow function with default parameters
+const calculateAreaArrow = (length = 5, width = 4) => length * width;
+
+//Scope demonstration function
+function scopeTest() {
+  // Block scope: let / const are not accessible outside this block
+  {
+    let blockVar = 'I am block-scoped';
+    const alsoBlocked = 42;
+    // These work inside:
+  }
+  // Attempting to access blockVar here throws ReferenceError
+  try {
+    console.log(blockVar); // ← ReferenceError
+  } catch (err) {
+    return `${err.name}: ${err.message} (when accessed outside block)`;
+  }
+}
+
+function runAssignment() {
+  const output = document.getElementById('output');
+  const len = Number(document.getElementById('length').value);
+  const wid = Number(document.getElementById('width').value);
+
+  if (isNaN(len) || isNaN(wid)) {
+    output.textContent = '⚠️ Length and width must be numbers.';
+    return;
+  }
+
+  //Standard function using user-provided values
+  const stdArea = calculateAreaStandard(len, wid);
+
+  //Arrow function with different values to demonstrate custom call
+  const arrowArea = calculateAreaArrow(len, wid);
+
+  //default behavior when no args are passed
+  const stdDefault = calculateAreaStandard();   // 5 x 4 = 20
+  const arrowDefault = calculateAreaArrow();    // 5 x 4 = 20
+
+  //Scope test error message
+  const scopeError = scopeTest();
+
+  const lines = [
+    `Standard Function Area (${len}x${wid}): ${stdArea}`,
+    `Arrow Function Area (Custom ${len}x${wid}): ${arrowArea}`,
+    `Scope Test Error: ${scopeError}`
+  ];
+
+  output.textContent = lines.join('\n');
+  console.log(lines.join('\n'));
+}
+</script>
+</body>
+</html>

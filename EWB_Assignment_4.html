@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assignment 4 — Loop Control Structures</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117; color: #c9d1d9;
+      padding: 2rem 1rem; min-height: 100vh;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { color: #58a6ff; font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .sub { color: #8b949e; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .card {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+    label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 0.3rem; }
+    input {
+      width: 100%; padding: 0.6rem 0.8rem; background: #0d1117;
+      border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9;
+      font-size: 0.9rem; margin-bottom: 1rem;
+    }
+    input:focus { outline: none; border-color: #58a6ff; }
+    button {
+      background: #238636; color: white; border: none;
+      padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 500; margin-right: 0.5rem;
+    }
+    button:hover { background: #2ea043; }
+    pre {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 1rem; font-family: 'Consolas', monospace; font-size: 0.85rem;
+      line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+      min-height: 120px; color: #c9d1d9;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Assignment 4 — Loop Control Structures</h1>
+  <p class="sub">Three loop demos: <code>for</code> multiplication table, <code>while</code> with <code>break</code>, and <code>do...while</code> with <code>continue</code>.</p>
+
+  <div class="card">
+    <label>Multiplication Table — Enter a number (e.g., 5)</label>
+    <input id="tableNum" type="number" placeholder= "Ex: 5 " min="1" max="20">
+
+    <button onclick="runAssignment()">▶ Run All Loops</button>
+  </div>
+
+  <pre id="output">Click "Run All Loops" to see the output...</pre>
+</div>
+
+<script>
+function runAssignment() {
+  const output = document.getElementById('output');
+  const tableNum = Number(document.getElementById('tableNum').value);
+  const divisor = 6; //Number(document.getElementById('divisor').value);
+
+  if (isNaN(tableNum) || isNaN(divisor) || divisor <= 0) {
+    output.textContent = ' Please enter valid numbers.';
+    return;
+  }
+
+  const sections = [];
+
+  //for loop: multiplication table
+  sections.push(`-- Multiplication Table of ${tableNum} --`);
+  for (let i = 1; i <= 5; i++) {
+    sections.push(`${tableNum} x ${i} = ${tableNum * i}`);
+  }
+
+  //while loop with break: for first number > 10 divisible by 6 ---
+  sections.push(`\n-- First number > 10 divisible by 6 --`);
+  let n = 10;
+  let found = null;
+  while (true) {
+    if (n > 10 && n % divisor === 0) {
+      found = n;
+      break; //loop
+    }
+    n++;
+  }
+  sections.push(found !== null ? `Found: ${found}` : 'No number found within range.');
+
+  //do...while loop with continue: skipping numbers divisible by 3
+  sections.push(`\n-- do...while, skipping numbers divisible by 3 (1 to 10) --`);
+  let counter = 0;
+  do {
+    counter++;
+    if (counter % 3 === 0) {
+      continue; // skip
+    }
+    sections.push(`Number: ${counter}`);
+  } while (counter < 10);
+
+  const text = sections.join('\n');
+  output.textContent = text;
+  console.log(text);
+}
+</script>
+</body>
+</html>
